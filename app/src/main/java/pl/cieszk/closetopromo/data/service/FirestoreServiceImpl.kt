@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import pl.cieszk.closetopromo.data.model.Discount
 
 class FirestoreServiceImpl : IFirestoreService {
@@ -11,6 +12,10 @@ class FirestoreServiceImpl : IFirestoreService {
 
     override fun getDiscount(documentPath: String): Task<DocumentSnapshot> {
         return db.document(documentPath).get()
+    }
+
+    override fun getAllDiscounts(collectionPath: String): Task<QuerySnapshot> {
+        return db.collection(collectionPath).get()
     }
 
     override fun addDiscount(collectionPath: String, discount: Discount): Task<DocumentReference> {

@@ -14,6 +14,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.initialize
 import pl.cieszk.closetopromo.navigation.AppNavGraph
 import pl.cieszk.closetopromo.ui.theme.CloseToPromoTheme
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
