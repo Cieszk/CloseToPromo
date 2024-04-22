@@ -2,4 +2,9 @@
 <resources>
 
     <style name="Theme.CloseToPromo" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/purplePrimary</item>
+        <item name="colorPrimaryDark">@color/purpleSecondary</item>
+        <item name="colorAccent">@color/purpleTertiary</item>
+    </style>
 </resources>

@@ -47,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -62,7 +63,7 @@ import java.util.Calendar
 fun HomeScreen(
     navController: NavController
 ) {
-    val homeScreenViewModel: HomeScreenViewModel = viewModel()
+    val homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
     val discounts = homeScreenViewModel.discounts.observeAsState(initial = emptyList()).value
 
     var showForm by remember { mutableStateOf(false) }
