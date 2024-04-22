@@ -35,4 +35,15 @@ class HomeScreenViewModel @Inject constructor(private val firestoreRepository: F
             }
         }
     }
+
+    fun addDiscount(discount: Discount) {
+        viewModelScope.launch {
+            try {
+                firestoreRepository.addDiscount("discount", discount)
+            } catch (e: Exception) {
+                Log.e("Discount", "Error while trying to add new discount: ${e.printStackTrace()}")
+            }
+
+        }
+    }
 }
