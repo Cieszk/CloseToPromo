@@ -3,6 +3,7 @@ package pl.cieszk.closetopromo.ui.screen
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +16,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -30,7 +33,9 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -78,7 +83,7 @@ fun HomeScreen(
     ) {
         LazyColumn {
             items(discounts) { discount ->
-                DiscountCard(discount)
+                DiscountCard(discount= discount, navController= navController)
             }
         }
 
@@ -88,8 +93,6 @@ fun HomeScreen(
             ) { showForm = false }
         }
     }
-
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -106,11 +109,15 @@ fun DiscountForm(
     var discountDateFrom by remember { mutableStateOf<Timestamp?>(null) }
     var discountDateTo by remember { mutableStateOf<Timestamp?>(null) }
 
+    val scrollState = rememberScrollState()
+
     if (showFormState) {
         Dialog(onDismissRequest = { onDismissRequest() }) {
             Card(elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)) {
                 Column(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .verticalScroll(scrollState),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text("Add a new Discount", style = MaterialTheme.typography.titleLarge)
@@ -127,18 +134,6 @@ fun DiscountForm(
                     OutlinedTextField(value = discountDescription,
                         onValueChange = { discountDescription = it },
                         label = { Text("Description") })
-
-                    OutlinedTextField(value = discountDescription,
-                        onValueChange = { discountDescription = it },
-                        label = { Text("Description") })
-                    TimestampPicker(label = "Select date from",
-                        onTimestampSelected = { selectedTimestamp ->
-                            discountDateFrom = selectedTimestamp
-                        })
-                    TimestampPicker(label = "Select date to",
-                        onTimestampSelected = { selectedTimestamp ->
-                            discountDateTo = selectedTimestamp
-                        })
                     IntInputField(
                         label = "Enter discount amount",
                         value = discountAmount,
@@ -155,6 +150,14 @@ fun DiscountForm(
                         pictureUrl = discountPicture,
                         onPictureUrlChange = { newUrl -> discountPicture = newUrl }
                     )
+                    TimestampPicker(label = "Select date from",
+                        onTimestampSelected = { selectedTimestamp ->
+                            discountDateFrom = selectedTimestamp
+                        })
+                    TimestampPicker(label = "Select date to",
+                        onTimestampSelected = { selectedTimestamp ->
+                            discountDateTo = selectedTimestamp
+                        })
 
                     Spacer(modifier = Modifier.height(20.dp))
                     Button(onClick = {
@@ -182,11 +185,14 @@ fun DiscountForm(
 }
 
 @Composable
-fun DiscountCard(discount: Discount) {
+fun DiscountCard(discount: Discount, navController: NavController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable {
+                       navController.navigate("detail/${discount.id}")
+            },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -202,16 +208,16 @@ fun DiscountCard(discount: Discount) {
                     .padding(8.dp),
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(discount.shop, fontWeight = FontWeight.Bold)
+                Text(discount.shop, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(discount.title, style = MaterialTheme.typography.bodyMedium)
-                Text(discount.description, color = Color.Gray)
             }
             Box(
                 modifier = Modifier
                     .wrapContentSize(Alignment.TopEnd)
                     .padding(8.dp)
             ) {
-                Text("${discount.discountAmount} %", style = MaterialTheme.typography.bodyLarge)
+                Text("-${discount.discountAmount}%", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.error)
             }
         }
     }
@@ -268,10 +274,12 @@ fun TimestampPicker(label: String, onTimestampSelected: (Timestamp) -> Unit) {
     val context = LocalContext.current
 
     val calendar = remember { Calendar.getInstance() }
-
-    OutlinedButton(onClick = { showDatePicker = true }) {
-        Text(label)
+    Row {
+        OutlinedButton(onClick = { showDatePicker = true }) {
+            Text(label)
+        }
     }
+
 
     if (showDatePicker) {
         DatePickerDialog(
@@ -306,7 +314,8 @@ fun GeoPointField(
             updateGeoPoint(
                 latitudeText, longitudeText, latitudeError, longitudeError, onGeoPointChange
             )
-        }, label = { Text("Latitude") }, isError = latitudeError
+        }, label = { Text("Latitude") }, isError = latitudeError,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
         )
         if (latitudeError) {
             Text(
@@ -322,7 +331,8 @@ fun GeoPointField(
             updateGeoPoint(
                 latitudeText, longitudeText, latitudeError, longitudeError, onGeoPointChange
             )
-        }, label = { Text("Longitude") }, isError = longitudeError
+        }, label = { Text("Longitude") }, isError = longitudeError,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
         )
         if (longitudeError) {
             Text(

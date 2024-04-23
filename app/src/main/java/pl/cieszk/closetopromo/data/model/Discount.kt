@@ -5,6 +5,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.GeoPoint
 
 data class Discount(
+
     @DocumentId
     val id: String? = null,
     val title: String,
@@ -15,4 +16,16 @@ data class Discount(
     val dateTo: Timestamp,
     val geolocation: GeoPoint,
     val picture: String
-)
+) {
+    constructor() : this(
+        "",
+        "",
+        "",
+        "",
+        0,
+        Timestamp.now(),
+        Timestamp.now(),
+        GeoPoint(0.0,0.0),
+        ""
+    )
+}
