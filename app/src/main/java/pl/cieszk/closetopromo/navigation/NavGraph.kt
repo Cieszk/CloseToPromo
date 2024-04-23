@@ -14,10 +14,12 @@ fun AppNavGraph() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
         composable("home") { HomeScreen(navController)}
-        composable("detail/{itemId}",
-            arguments = listOf(navArgument("itemId") { type = NavType.StringType })
+        composable(
+            route = "detail/{discountId}",
+            arguments = listOf(navArgument("discountId") { type = NavType.StringType })
         ) { backStackEntry ->
-            DetailScreen(itemId = backStackEntry.arguments?.getString("itemId") ?: "", navController = navController)
+            val discountId = backStackEntry.arguments?.getString("discountId")
+            DetailScreen(itemId = discountId, navController = navController)
         }
     }
 }
