@@ -1,7 +1,10 @@
 package pl.cieszk.closetopromo.ui.screen
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,6 +37,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -67,6 +72,34 @@ fun HomeScreen(
     val discounts = homeScreenViewModel.discounts.observeAsState(initial = emptyList()).value
 
     var showForm by remember { mutableStateOf(false) }
+    var locationPermissionState by remember { mutableStateOf("") }
+
+    val locationPermissionRequest = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        when {
+            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                locationPermissionState = "Precise location access granted."
+            }
+
+            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+                locationPermissionState = "Approximate location access granted."
+            }
+
+            else -> {
+                locationPermissionState = "No location access granted."
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        locationPermissionRequest.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
+    }
 
     Scaffold(
         floatingActionButton = {
@@ -219,7 +252,7 @@ fun DiscountAmount(discountAmount: Int) {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .clip(RoundedCornerShape(50))
-            .background(MaterialTheme.colorScheme.secondaryContainer)
+            .background(Color(219,65,22))
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Text(
