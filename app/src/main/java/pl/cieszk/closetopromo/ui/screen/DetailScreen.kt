@@ -10,8 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -56,10 +59,14 @@ fun DetailScreen(
                 TopAppBar(
                     title = { Text("Discount Details") },
                     actions = {
-                        IconButton(onClick = { discount.id?.let { viewModel.deleteDiscount(it) } }) {
+                        IconButton(onClick = {
+                            discount.id?.let { viewModel.deleteDiscount(it) }
                             navController.popBackStack()
+                        }) {
+                            Icon(Icons.Default.Delete, contentDescription = "Delete")
                         }
-                    })
+                    }
+                )
             }
         ) { padding ->
             Column(modifier = Modifier.padding(padding)) {

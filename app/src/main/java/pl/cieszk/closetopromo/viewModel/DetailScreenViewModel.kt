@@ -46,8 +46,7 @@ class DetailScreenViewModel @Inject constructor(
     fun deleteDiscount(discountId: String) {
         viewModelScope.launch {
             try {
-                val result = firestoreRepository.deleteDiscount(discountId)
-                val success = result.isSuccessful
+                firestoreRepository.deleteDiscount("discount/${discountId}")
                 Log.d("DetailViewModel", "Successfully deleted a discount")
             } catch (e: Exception) {
                 Log.e("DetailViewModel", "Error while deleting discount", e)
